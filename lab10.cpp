@@ -27,6 +27,7 @@ private:
 	vector<vector<Edge>> adjacencyList;
 
 public:
+	int numberOfVertices;
 	UndirectedWeightedGraph(int count)
 	{
 		numberOfVertices = count;

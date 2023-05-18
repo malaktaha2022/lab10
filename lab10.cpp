@@ -96,10 +96,10 @@ public:
 
 int main()
 {
-	UndirectedWeightedGraph graph(10);
+  UndirectedWeightedGraph graph(10);
   int source, destination, weight;
-	ifstream input("Board.txt");
-	string s;
+  ifstream input("Board.txt");
+  string s;
 
 	while (getline(input, s))
 	{

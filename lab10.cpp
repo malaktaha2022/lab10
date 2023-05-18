@@ -1,8 +1,8 @@
 //
-// lab10.cpp
+//  main.cpp
+//  lab10
 //
-//
-// created by Malak Abdelhalim on 16/05/2023
+//  Created by Malak Abdelhalim on 16/05/2023.
 //
 
 #include <fstream>
@@ -15,84 +15,94 @@ using namespace std;
 
 struct Edge
 {
-	int source;
-	int destination;
-	int weight;
+    int source;
+    int destination;
+    int weight;
+    
+    Edge() : source(0), destination(0), weight(0) {}
 };
 
 class UndirectedWeightedGraph
 {
 private:
-	int numberOfVertices;
-	vector<vector<Edge>> adjacencyList;
-
+    int numberOfVertices;
+    vector<vector<Edge>> adjacencyList;
 public:
-	int numberOfVertices;
-	UndirectedWeightedGraph(int count)
-	{
-		numberOfVertices = count;
-		adjacencyList.resize(numberOfVertices);
-	}
+    UndirectedWeightedGraph(int count)
+    {
+        numberOfVertices = count;
+        adjacencyList.resize(numberOfVertices);
+    }
+    
+    int getNumberOfVertices() const
+    {
+        return numberOfVertices;
+    }
+    
+    const vector<vector<Edge>>& getAdjacencyList() const
+    {
+        return adjacencyList;
+    }
+    
+    void addEdge(int source, int destination, int weight)
+    {
+        Edge edge;
+        edge.source = source;
+        edge.destination = destination;
+        edge.weight = weight;
+        adjacencyList[source].push_back(edge);
+        adjacencyList[destination].push_back(edge);
+    }
 
-	void addEdge(int source, int destination, int weight)
-	{
-		Edge edge;
-		edge.source = source;
-		edge.destination = destination;
-		edge.weight = weight;
-		adjacencyList[source].push_back(edge);
-		adjacencyList[destination].push_back(edge);
-	}
+    void BFS(int source)
+    {
+        queue<int> vertexQueue;
+        vector<bool> visited(numberOfVertices, false);
 
-	void BFS(int source)
-	{
-		queue<int> queue;
-		vector<bool> visited(numberOfVertices, false);
+        vertexQueue.push(source);
+        visited[source] = true;
 
-		queue.push(source);
-		visited[source] = true;
+        while (!vertexQueue.empty())
+        {
+            int currentVertex = vertexQueue.front();
+            vertexQueue.pop();
 
-		while (!queue.empty())
-		{
-			int currentVertex = queue.front();
-			queue.pop();
+            cout << currentVertex << " ";
 
-			cout << currentVertex << " ";
+            for (Edge edge : adjacencyList[currentVertex])
+            {
+                if (!visited[edge.destination])
+                {
+                    vertexQueue.push(edge.destination);
+                    visited[edge.destination] = true;
+                }
+            }
+        }
 
-			for (Edge edge : adjacencyList[currentVertex])
-			{
-				if (!visited[edge.destination])
-				{
-					queue.push(edge.destination);
-					visited[edge.destination] = true;
-				}
-			}
-		}
+        cout << endl;
+    }
 
-		cout << endl;
-	}
+    void DFS(int source)
+    {
+        vector<bool> visited(numberOfVertices, false);
 
-	void DFS(int source)
-	{
-		vector<bool> visited(numberOfVertices, false);
+        DFSRec(source, visited);
+    }
 
-		DFSRec(source, visited);
-	}
+    void DFSRec(int vertex, vector<bool>& visited)
+    {
+        visited[vertex] = true;
 
-	void DFSRec(int vertex, vector<bool>& visited)
-	{
-		visited[vertex] = true;
+        cout << vertex << " ";
 
-		cout << vertex << " ";
-
-		for (Edge edge : adjacencyList[vertex])
-		{
-			if (!visited[edge.destination])
-			{
-				DFSRec(edge.destination, visited);
-			}
-		}
-	}
+        for (Edge edge : adjacencyList[vertex])
+        {
+            if (!visited[edge.destination])
+            {
+                DFSRec(edge.destination, visited);
+            }
+        }
+    }
 };
 
 int main()
@@ -102,29 +112,30 @@ int main()
   ifstream input("Board.txt");
   string s;
 
-	while (getline(input, s))
-	{
-		stringstream ss(s);
-		ss >> source >> destination >> weight;
-		graph.addEdge(source, destination, weight);
-	}
+    while (getline(input, s))
+    {
+        stringstream ss(s);
+        ss >> source >> destination >> weight;
+        graph.addEdge(source, destination, weight);
+    }
 
-	cout << "The graph:" << endl;
-	for (int i = 0; i < graph.numberOfVertices; i++)
-	{
-		cout << i << ": ";
-		for (Edge edge : graph.adjacencyList[i])
-		{
-			cout << edge.destination << " ";
-		}
-		cout << endl;
-	}
+    cout << "The graph:" << endl;
+    const vector<vector<Edge>>& adjacencyList = graph.getAdjacencyList();
+    for (int i = 0; i < graph.getNumberOfVertices(); i++)
+    {
+        cout << i << ": ";
+        for (const Edge& edge : adjacencyList[i])
+        {
+            cout << edge.destination << " ";
+        }
+        cout << endl;
+    }
 
-	cout << "Breadth-first search:" << endl;
-	graph.BFS(0);
+    cout << "Breadth-first search:" << endl;
+    graph.BFS(0);
 
-	cout << "Depth-first search:" << endl;
-	graph.DFS(0);
+    cout << "Depth-first search:" << endl;
+    graph.DFS(0);
 
-	return 0;
+    return 0;
 }
